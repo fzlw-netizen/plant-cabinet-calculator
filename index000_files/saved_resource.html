@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<!-- saved from url=(0012)about:srcdoc -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="Content-Security-Policy" content="frame-src https://processon.com https://*.processon.com; child-src https://processon.com https://*.processon.com; object-src &#39;none&#39;">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>热植柜报价计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .main-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .cards-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .cards-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: #606f7b;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+        }
+
+        .dimensions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .dimensions-grid .input-group {
+            margin-bottom: 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-item .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .stat-item .stat-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .params-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .price-result {
+            margin-top: 24px;
+            padding: 24px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border-radius: 14px;
+            text-align: center;
+            color: white;
+        }
+
+        .price-result .price-label {
+            font-size: 0.95rem;
+            opacity: 0.95;
+            margin-bottom: 8px;
+        }
+
+        .price-result .price-value {
+            font-size: 2.8rem;
+            font-weight: 700;
+        }
+
+        .price-result .price-unit {
+            font-size: 1.2rem;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        .breakdown {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .breakdown-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .breakdown-item .breakdown-label {
+            font-size: 0.75rem;
+            opacity: 0.85;
+        }
+
+        .breakdown-item .breakdown-value {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px 8px;
+            text-align: center;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .comparison-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.85rem;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .error-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .error-green {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .error-yellow {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .error-orange {
+            background: #ffe5d0;
+            color: #c55a11;
+        }
+
+        .error-red {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .section-divider {
+            margin: 24px 0 20px 0;
+            border: 0;
+            border-top: 1px dashed #dee2e6;
+        }
+
+        .no-data {
+            color: #999;
+            font-style: italic;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌿 热植柜报价计算器</h1>
+        
+        <div class="main-layout">
+            <!-- 尺寸输入区 -->
+            <div class="card">
+                <div class="card-title">📐 柜体尺寸（mm）</div>
+                <div class="dimensions-grid">
+                    <div class="input-group">
+                        <label for="length">长度 L</label>
+                        <input type="number" id="length" value="1000" min="1" placeholder="mm">
+                    </div>
+                    <div class="input-group">
+                        <label for="width">宽度 W</label>
+                        <input type="number" id="width" value="500" min="1" placeholder="mm">
+                    </div>
+                    <div class="input-group">
+                        <label for="height">高度 H</label>
+                        <input type="number" id="height" value="1000" min="1" placeholder="mm">
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">体积</div>
+                        <div class="stat-value" id="volume">0.500</div>
+                        <div class="stat-label">m³</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">亚克力面积</div>
+                        <div class="stat-value" id="glassArea">3.000</div>
+                        <div class="stat-label">m²</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">型材长度</div>
+                        <div class="stat-value" id="profileLength">10.000</div>
+                        <div class="stat-label">m</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 报价结果 -->
+            <div class="card">
+                <div class="card-title">💰 报价结果</div>
+                <div class="price-result">
+                    <div class="price-label">预估总报价</div>
+                    <div class="price-value">
+                        <span id="totalPrice">3708</span>
+                        <span class="price-unit">元</span>
+                    </div>
+                    <div class="breakdown">
+                        <div class="breakdown-item">
+                            <div class="breakdown-label">设计费用</div>
+                            <div class="breakdown-value" id="baseFeeDisplay">800 元</div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-label">亚克力费用</div>
+                            <div class="breakdown-value" id="glassFeeDisplay">593 元</div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-label">型材费用</div>
+                            <div class="breakdown-value" id="profileFeeDisplay">2315 元</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 固定参数
+        const baseFee = 800;
+        const glassPrice = 197.6;
+        const profilePrice = 231.5;
+
+        // 获取输入元素
+        const inputs = {
+            length: document.getElementById('length'),
+            width: document.getElementById('width'),
+            height: document.getElementById('height')
+        };
+
+        // 显示元素
+        const displays = {
+            volume: document.getElementById('volume'),
+            glassArea: document.getElementById('glassArea'),
+            profileLength: document.getElementById('profileLength'),
+            totalPrice: document.getElementById('totalPrice'),
+            baseFeeDisplay: document.getElementById('baseFeeDisplay'),
+            glassFeeDisplay: document.getElementById('glassFeeDisplay'),
+            profileFeeDisplay: document.getElementById('profileFeeDisplay')
+        };
+
+        // 计算函数
+        function calculateDimensions() {
+            const L = parseFloat(inputs.length.value) || 0;
+            const W = parseFloat(inputs.width.value) || 0;
+            const H = parseFloat(inputs.height.value) || 0;
+
+            // 体积 (m³)
+            const volume = (L * W * H) / 1e9;
+
+            // 亚克力面积 (m²) - 4面：前后左右，无顶盖
+            // 前面+后面: 2 × L × H
+            // 左面+右面: 2 × W × H
+            const glassArea = (2 * L * H + 2 * W * H) / 1e6;
+
+            // 铝型材长度 (m) - 假设使用3030铝型材框架
+            // 12根：4长 + 4宽 + 4高
+            const profileLength = 4 * (L + W + H) / 1000;
+
+            return { L, W, H, volume, glassArea, profileLength };
+        }
+
+        function calculatePrice(glassArea, profileLength) {
+            const glassFee = glassArea * glassPrice;
+            const profileFee = profileLength * profilePrice;
+            const totalPrice = baseFee + glassFee + profileFee;
+
+            return { baseFee, glassFee, profileFee, totalPrice };
+        }
+
+        function updateDisplay() {
+            const dims = calculateDimensions();
+            const price = calculatePrice(dims.glassArea, dims.profileLength);
+
+            displays.volume.textContent = dims.volume.toFixed(3);
+            displays.glassArea.textContent = dims.glassArea.toFixed(3);
+            displays.profileLength.textContent = dims.profileLength.toFixed(3);
+
+            displays.totalPrice.textContent = Math.round(price.totalPrice);
+            displays.baseFeeDisplay.textContent = price.baseFee.toFixed(0) + ' 元';
+            displays.glassFeeDisplay.textContent = price.glassFee.toFixed(0) + ' 元';
+            displays.profileFeeDisplay.textContent = price.profileFee.toFixed(0) + ' 元';
+        }
+
+        // 绑定事件监听
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', updateDisplay);
+        });
+
+        // 初始计算
+        updateDisplay();
+    </script>
+
+</body></html>
